@@ -1,0 +1,29 @@
+Sample,Age_years,Passage,Subject,CyDye,GroupEdad,GroupPassage,Dataset,Source,Lot,TrueLabel
+GSM954279,21,4,88,Cy3,Young,Low,GSE39035,NA,NA,1
+GSM954280,21,8,88,Cy5,Young,High,GSE39035,NA,NA,0
+GSM954281,24,8,89,Cy3,Young,High,GSE39035,NA,NA,0
+GSM954282,24,4,89,Cy5,Young,Low,GSE39035,NA,NA,1
+GSM954283,23,4,91,Cy3,Young,Low,GSE39035,NA,NA,1
+GSM954284,23,8,91,Cy5,Young,High,GSE39035,NA,NA,0
+GSM954285,23,8,92,Cy3,Young,High,GSE39035,NA,NA,0
+GSM954286,23,4,92,Cy5,Young,Low,GSE39035,NA,NA,1
+GSM954287,75,4,164,Cy3,Old,Low,GSE39035,NA,NA,1
+GSM954288,75,8,164,Cy5,Old,High,GSE39035,NA,NA,0
+GSM954289,79,8,172,Cy3,Old,High,GSE39035,NA,NA,0
+GSM954290,79,4,172,Cy5,Old,Low,GSE39035,NA,NA,1
+GSM954291,82,4,194,Cy3,Old,Low,GSE39035,NA,NA,1
+GSM954292,82,8,194,Cy5,Old,High,GSE39035,NA,NA,0
+GSM954293,75,8,271,Cy3,Old,High,GSE39035,NA,NA,0
+GSM954294,75,4,271,Cy5,Old,Low,GSE39035,NA,NA,1
+GSM194075,NA,4,NA,NA,NA,Early,GSE7888,"mesenchymal stem cells, lot#4F1127, 4th passage",lot#4F1127,1
+GSM194076,NA,4,NA,NA,NA,Early,GSE7888,"mesenchymal stem cells, lot#4F0312, 4th passage",lot#4F0312,1
+GSM194077,NA,4,NA,NA,NA,Early,GSE7888,"mesenchymal stem cells, lot#5F0138, 4th passage",lot#5F0138,1
+GSM194078,NA,4,NA,NA,NA,Early,GSE7888,"mesenchymal stem cells, lot#4F0591, 4th passage",lot#4F0591,1
+GSM194079,NA,4,NA,NA,NA,Early,GSE7888,"mesenchymal stem cells, lot#4F0760, 4th passage",lot#4F0760,1
+GSM194080,NA,5,NA,NA,NA,Early,GSE7888,"mesenchymal stem cells, lot#4F1560, 5th passage",lot#4F1560,1
+GSM194092,NA,22,NA,NA,NA,Late,GSE7888,"mesenchymal stem cells, lot#4F1127, 22nd passage",lot#4F1127,0
+GSM194093,NA,24,NA,NA,NA,Late,GSE7888,"mesenchymal stem cells, lot#5F0138, 24th passage",lot#5F0138,0
+GSM194094,NA,28,NA,NA,NA,Late,GSE7888,"mesenchymal stem cells, lot#4F0312, 28th passage",lot#4F0312,0
+GSM194095,NA,28,NA,NA,NA,Late,GSE7888,"mesenchymal stem cells, lot#4F1560, 28th passage",lot#4F1560,0
+GSM194096,NA,28,NA,NA,NA,Late,GSE7888,"mesenchymal stem cells, lot#4F0591, 28th passage",lot#4F0591,0
+GSM194097,NA,28,NA,NA,NA,Late,GSE7888,"mesenchymal stem cells, lot#4F0760, 28th passage",lot#4F0760,0

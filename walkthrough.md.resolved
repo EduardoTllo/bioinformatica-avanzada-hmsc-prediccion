@@ -1,0 +1,52 @@
+# ML Model Training Results
+
+## Overview
+We trained 4 binary classifiers to predict MSC senescence based on 32 gene expression features.
+- **Dataset**: 28 samples (merged from X and y).
+- **Validation**: Stratified 5-Fold Cross-Validation.
+
+## Performance Comparison
+
+| Model | Accuracy | Precision | Recall | F1-Score | ROC-AUC |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Random Forest** | **0.927** | **0.933** | **0.933** | **0.920** | **0.978** |
+| SVM (Linear) | 0.927 | 0.933 | 0.933 | 0.920 | 0.922 |
+| Logistic Regression | 0.927 | 0.933 | 0.933 | 0.920 | 0.922 |
+| Decision Tree | 0.780 | 0.883 | 0.733 | 0.751 | 0.800 |
+| SVM (Poly) | 0.760 | 0.783 | 0.800 | 0.746 | 0.922 |
+| SVM (RBF) | 0.713 | 0.833 | 0.667 | 0.674 | 0.922 |
+
+> [!TIP]
+> **SVM (Linear)** improved drastically over RBF, matching Logistic Regression's performance. However, **Random Forest** still leads with the highest AUC (0.978).
+
+## Confusion Matrix (Random Forest)
+Aggregated predictions from 5-Fold Cross-Validation:
+
+| | Predicted Senescent (0) | Predicted Functional (1) |
+| :--- | :---: | :---: |
+| **Actual Senescent (0)** | **13** (TN) | 1 (FP) |
+| **Actual Functional (1)** | 1 (FN) | **13** (TP) |
+
+- **Correct Predictions**: 26/28 (92.8%)
+- **Errors**: Only 2 misclassified samples.
+
+## Best Model: Random Forest
+The final model was retrained on the full dataset and saved as `best_model_msc_senescence.pkl`.
+
+### Top 10 Feature Importances
+These genes are the strongest predictors of MSC senescence in this model:
+
+1.  **SCN9A** (0.1853)
+2.  **HDAC9** (0.0979)
+3.  **KCTD16** (0.0897)
+4.  **CD55** (0.0627)
+5.  **EPHA5** (0.0545)
+6.  **SOX11** (0.0495)
+7.  **C8orf34** (0.0479)
+8.  **FGD4** (0.0478)
+9.  **EMX2** (0.0438)
+10. **RBM24** (0.0361)
+
+## Next Steps
+- Use `best_model_msc_senescence.pkl` to predict new samples.
+- Investigate the biological role of top genes like **SCN9A** and **HDAC9** in senescence.
