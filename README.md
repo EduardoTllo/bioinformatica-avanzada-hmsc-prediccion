@@ -167,9 +167,7 @@ python validate_model.py
 ```
 
 ## 👤 Autor
-**Eduardo**
+**Eduardo Tello y Anjali Castro**
 - Proyecto: Bioinformática Avanzada
 - Año: 2025
 
-## 📄 Licencia
-Este proyecto está bajo la Licencia MIT.
