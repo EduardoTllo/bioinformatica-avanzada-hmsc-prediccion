@@ -92,7 +92,7 @@ Actual Funcional (1)          1                   13
 ```
 bioinformatica-avanzada-hmsc-prediccion/
 ├── README.md                          # Documentación principal
-└── Modelo Machine Learning/
+└── Fase 3 - Modelo de clasificación Machine Learning/
     ├── train_model.py                 # Script principal de entrenamiento
     ├── validate_model.py              # Script de validación
     ├── X_features_matrix.csv          # Matriz de características (genes)
@@ -115,7 +115,7 @@ bioinformatica-avanzada-hmsc-prediccion/
 ### 1. Entrenamiento del Modelo
 
 ```bash
-cd "Modelo Machine Learning"
+cd "Fase 3 - Modelo de clasificación Machine Learning"
 python train_model.py
 ```
 
@@ -129,7 +129,7 @@ Este script:
 ### 2. Validación con Datos Externos
 
 ```bash
-cd "Modelo Machine Learning"
+cd "Fase 3 - Modelo de clasificación Machine Learning"
 python validate_model.py
 ```
 
@@ -147,7 +147,7 @@ import pandas as pd
 import os
 
 # Cambiar al directorio del modelo
-os.chdir("Modelo Machine Learning")
+os.chdir("Fase 3 - Modelo de clasificación Machine Learning")
 
 # Cargar modelo y scaler
 model = joblib.load('best_model_msc_senescence.pkl')
