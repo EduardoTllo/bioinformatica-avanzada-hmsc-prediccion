@@ -1,32 +1,106 @@
 # Bioinformática Avanzada: Predicción y Rescate de la Función Inmunomoduladora en hMSC mediante Análisis Transcriptómico
 
-## 📋 Descripción del Proyecto
+## 1. Temática General del Proyecto
 
-Este proyecto utiliza técnicas de Machine Learning para predecir la senescencia en células madre mesenquimales humanas (hMSC) basándose en perfiles de expresión génica. El objetivo es identificar biomarcadores transcriptómicos que permitan distinguir entre hMSC funcionales y senescentes, facilitando estrategias de rescate de la función inmunomoduladora.
+El proyecto busca predecir y entender la pérdida de la función inmunomoduladora en células madre mesenquimales humanas (hMSC) a partir de datos transcriptómicos. La idea central es identificar biomarcadores de senescencia (por edad del donante y por número de pasajes in vitro) que expliquen por qué algunas hMSC dejan de suprimir respuestas inmunes y, a partir de eso, proponer reguladores potenciales para “rescatar” esa función.
 
-## 🎯 Objetivos
+## 2. Introducción y Contexto
 
-- **Predicción de Senescencia**: Desarrollar modelos de clasificación para identificar hMSC senescentes vs. funcionales
-- **Identificación de Biomarcadores**: Descubrir genes clave asociados con la senescencia en hMSC
-- **Validación Externa**: Evaluar el rendimiento del modelo en datasets independientes (GSE35958)
+Las hMSC se usan en terapia celular por tres propiedades clave: **inmunomodulación, autorrenovación y potencial de diferenciación**.
 
-## 📊 Datasets
+En bioprocesos industriales el gran reto es la **escalabilidad**: hay que expandir las hMSC en cultivo para obtener dosis terapéuticas suficientes. Sin embargo, hoy no existen protocolos estandarizados sobre la edad máxima del donante ni el número máximo de pasajes aceptables, lo que lleva a una alta variabilidad en la calidad inmunomoduladora entre lotes de hMSC.
 
-### Datos de Entrenamiento
-- **Samples**: 28 muestras de hMSC
-  - 13 muestras funcionales (jóvenes)
-  - 15 muestras senescentes (ancianas)
-- **Features**: 33 genes seleccionados
-- **Source**: Datos de expresión génica normalizados (log2)
+El proyecto se plantea entonces como un esfuerzo por definir **criterios transcriptómicos objetivos** que permitan anticipar cuándo una hMSC ha perdido su “buena” inmunomodulación.
 
-### Datos de Validación
+## 3. Estado del Arte y Vacío Identificado
+
+### Qué se sabe
+La senescencia cronológica (donantes ancianos) y la senescencia replicativa (muchos pasajes) se asocian a una **disminución de 30–50 % en la capacidad de suprimir linfocitos T** respecto a hMSC de donantes jóvenes.
+
+Esta pérdida funcional se vincula con:
+*   **Aumento de SASP** (IL-6, IL-8, quimiocinas) y daño en el ADN.
+*   **Activación crónica de NF-κB y rutas MAPK**.
+*   Cambios metabólicos y en fosfolípidos que modulan la respuesta inmune.
+
+A nivel molecular, se ha visto que en hMSC envejecidas disminuyen **PD-L1 e IDO1**, dos reguladores clave de inmunosupresión, en parte por la reducción del factor de transcripción **GATA2**. La sobreexpresión de GATA2 puede rescatar parcialmente la inmunomodulación.
+
+### Qué falta
+Existen estudios de transcriptómica de senescencia, pipelines de microarrays y hasta modelos de ML tipo SenPred, pero **no hay un panel transcriptómico estándar** específicamente diseñado para predecir la pérdida de inmunomodulación en hMSC, ni criterios claros de edad/pasaje aceptables para uso terapéutico.
+
+### Pregunta Central
+> **¿Qué biomarcadores transcriptómicos predicen la pérdida de inmunomodulación en hMSC y qué reguladores podrían rescatarla?**
+
+---
+
+## 4. Fase 1 – Descubrimiento de Firma “Core” de Senescencia
+
+### Objetivo Específico
+Identificar firmas transcriptómicas diferenciales asociadas a edad y pasaje en hMSC y derivar una **firma core de senescencia** compartida por ambas formas (cronológica y replicativa).
+
+### Datos y Diseño
+Se integran dos datasets de microarrays:
+1.  **GSE39035**: Diseño factorial (donantes jóvenes vs ancianos, distintos pasajes).
+2.  **GSE7888**: Serie de pasajes (early, mid, late).
+
+### Pipeline Bioinformático
+1.  Carga de datos y metadata (`GEOQuery`).
+2.  Anotación de probes a genes y colapso por mediana.
+3.  Transformación log2 + normalización cuantílica para unificar plataformas.
+4.  Filtrado de baja expresión.
+5.  Corrección de efectos de batch/donante usando `removeBatchEffect` y `duplicateCorrelation`.
+6.  Modelado lineal con `limma` con varios contrastes:
+    *   Edad: Old vs Young
+    *   Pasaje: High vs Low, Late vs Early
+    *   Efecto aditivo Edad+Pasaje
+    *   Interacción Edad×Pasaje
+
+### Resultados Clave
+*   Tras la corrección de batch, la PCA muestra que emergen claramente los patrones biológicos de Edad y Pasaje.
+*   El número de DEGs es mayor para Pasaje que para Edad, indicando que la senescencia replicativa tiene un impacto transcriptómico más profundo.
+*   La interacción Edad×Pasaje ≈ 0, sugiriendo efectos mayormente aditivos.
+*   **Firma Core**: Se identificaron genes como **EMX2OS, SOX11 y DDIT4L** (downregulated en ambos contextos), indicando una pérdida funcional estable.
+
+---
+
+## 5. Fase 2 – Senescencia e Inmunomodulación
+
+### Objetivo Específico
+Identificar genes y vías inmunomoduladoras alteradas durante la senescencia de hMSC y proponer reguladores upstream (TF/miRNA) y un panel preliminar **MSC-ImmunoScore**.
+
+### Enfoque General
+1.  Construir un “catálogo inmune” usando anotaciones GO y MSigDB.
+2.  Filtrar los DEGs de Fase 1 a DEGs inmunomoduladores.
+3.  Realizar enriquecimiento funcional GO/KEGG.
+4.  Explorar reguladores upstream (TF y miRNAs).
+5.  Integrar resultados en un panel preliminar.
+
+### Resultados Clave
+*   **Catálogo Inmune**: En Pasaje High vs Low, >170 genes inmunes son diferenciales (muchos downregulated), reflejando un apagamiento de funciones inmunes.
+*   **Enriquecimiento Funcional**:
+    *   **GO BP**: Regulación de linfocitos/leucocitos, respuesta inflamatoria, producción de citoquinas.
+    *   **KEGG**: Complemento y cascadas de coagulación.
+*   **Reguladores Upstream**: Regulación distribuida (módulos miRNA-target) más que un único "master regulator".
+*   **Panel MSC-ImmunoScore**: Genes candidatos priorizados (e.g., **SOX11, EMX2OS, RBP4, NTF3, ND1N, DPPA3, RRAGD, BST1, TNFRSF11B**) que capturan señal de senescencia e impacto inmune.
+
+---
+
+## 6. Fase 3 – Modelo de Clasificación Machine Learning
+
+Esta fase utiliza el panel de genes identificado para entrenar un modelo predictivo capaz de clasificar nuevas muestras.
+
+### 📊 Datasets
+
+#### Datos de Entrenamiento
+- **Samples**: 28 muestras de hMSC (13 funcionales, 15 senescentes).
+- **Features**: 33 genes seleccionados del panel MSC-ImmunoScore.
+- **Source**: Datos de expresión génica normalizados (log2).
+
+#### Datos de Validación Externa
 - **Dataset**: GSE35958
-- **Samples**: 9 muestras de donantes ancianos (79-94 años)
-- **Grupos**: Controles ancianos y pacientes con osteoporosis
+- **Samples**: 9 muestras de donantes ancianos (79-94 años).
+- **Grupos**: Controles ancianos y pacientes con osteoporosis.
 
-## 🧬 Genes Biomarcadores Identificados
-
-### Top 10 Features (por importancia)
+### 🧬 Genes Biomarcadores Identificados (Top Features)
 
 | Rank | Gene | Importancia | Función Biológica |
 |------|------|-------------|-------------------|
@@ -35,29 +109,13 @@ Este proyecto utiliza técnicas de Machine Learning para predecir la senescencia
 | 3 | **KCTD16** | 0.0897 | Regulación de la degradación proteica |
 | 4 | **CD55** | 0.0627 | Proteína reguladora del complemento |
 | 5 | **EPHA5** | 0.0545 | Receptor tirosina quinasa |
-| 6 | **SOX11** | 0.0495 | Factor de transcripción |
-| 7 | **C8orf34** | 0.0479 | Función desconocida |
-| 8 | **FGD4** | 0.0478 | Activador de GTPasa |
-| 9 | **EMX2** | 0.0438 | Desarrollo y diferenciación |
-| 10 | **RBM24** | 0.0361 | Proteína de unión a ARN |
 
-## 🤖 Modelos Implementados
-
-### Algoritmos Evaluados
-1. **Random Forest** ⭐ (Mejor modelo)
-2. Logistic Regression
-3. Support Vector Machine (Linear, Poly, RBF)
-4. Decision Tree
-
-### Resultados del Modelo Final (Random Forest)
+### 🤖 Resultados del Modelo (Random Forest)
 
 #### Entrenamiento (5-Fold Cross-Validation)
 | Métrica | Valor |
 |---------|-------|
 | **Accuracy** | 92.7% |
-| **Precision** | 93.3% |
-| **Recall** | 93.3% |
-| **F1-Score** | 92.0% |
 | **ROC-AUC** | **0.978** |
 
 #### Validación Externa (GSE35958)
@@ -66,26 +124,10 @@ Este proyecto utiliza técnicas de Machine Learning para predecir la senescencia
 | **Accuracy** | 78% |
 | **Recall** | 78% |
 | **Precision** | 100% |
-| True Positives | 7/9 |
-| False Negatives | 2/9 |
 
-### Matriz de Confusión (Entrenamiento)
+**Interpretación**: El modelo identifica correctamente el 78% de las muestras senescentes en un dataset independiente de donantes ancianos.
 
-```
-                Predicho Senescente (0)  Predicho Funcional (1)
-Actual Senescente (0)        13                    1
-Actual Funcional (1)          1                   13
-```
-
-**Interpretación**: Solo 2 muestras mal clasificadas de 28 totales.
-
-## 🛠️ Tecnologías y Herramientas
-
-- **Lenguaje**: Python 3.13
-- **Machine Learning**: scikit-learn
-- **Análisis de Datos**: pandas, numpy
-- **Visualización**: matplotlib, seaborn
-- **Validación**: Stratified K-Fold Cross-Validation
+---
 
 ## 📁 Estructura del Proyecto
 
@@ -110,102 +152,24 @@ bioinformatica-avanzada-hmsc-prediccion/
         └── metadata_GSE35958 (1).csv
 ```
 
-## 🚀 Uso
+## 🚀 Uso (Fase 3)
 
 ### 1. Entrenamiento del Modelo
-
 ```bash
 cd "Fase 3 - Modelo de clasificación Machine Learning"
 python train_model.py
 ```
 
-Este script:
-- Carga y preprocesa los datos
-- Entrena múltiples modelos (Random Forest, SVM, Logistic Regression, Decision Tree)
-- Evalúa con 5-Fold Cross-Validation
-- Guarda el mejor modelo
-- Genera visualizaciones (matriz de confusión, feature importance)
-
 ### 2. Validación con Datos Externos
-
 ```bash
 cd "Fase 3 - Modelo de clasificación Machine Learning"
 python validate_model.py
 ```
 
-Este script:
-- Carga el modelo entrenado
-- Procesa datos de validación (GSE35958)
-- Alinea features faltantes
-- Calcula métricas de rendimiento
-
-### 3. Uso del Modelo para Predicción
-
-```python
-import joblib
-import pandas as pd
-import os
-
-# Cambiar al directorio del modelo
-os.chdir("Fase 3 - Modelo de clasificación Machine Learning")
-
-# Cargar modelo y scaler
-model = joblib.load('best_model_msc_senescence.pkl')
-scaler = joblib.load('scaler_msc_senescence.pkl')
-
-# Cargar nuevos datos
-X_new = pd.read_csv('nuevas_muestras.csv')
-
-# Preprocesar
-X_scaled = scaler.transform(X_new)
-
-# Predecir
-predictions = model.predict(X_scaled)
-probabilities = model.predict_proba(X_scaled)
-
-print(f"Predicción: {predictions}")
-print(f"Probabilidades: {probabilities}")
-```
-
-## 📈 Análisis de Resultados
-
-### Hallazgos Clave
-
-1. **Alto Rendimiento en Entrenamiento**: El modelo Random Forest alcanza 97.8% de ROC-AUC en validación cruzada.
-
-2. **Validación Externa Robusta**: 78% de accuracy en muestras de donantes ancianos (GSE35958), demostrando buena generalización.
-
-3. **SCN9A como Biomarcador Principal**: El gen **SCN9A** (canal de sodio) es el predictor más importante (18.5% de importancia), sugiriendo un rol crucial en la senescencia de hMSC.
-
-4. **Perfil de Error**: El modelo tiene alta precisión (100%) cuando predice senescencia, pero puede tener falsos negativos (2/9 muestras), indicando que algunos donantes ancianos conservan perfiles de expresión "jóvenes".
-
-## 🔬 Implicaciones Biológicas
-
-- **SCN9A** y **HDAC9** emergen como potenciales dianas terapéuticas para rescatar la función inmunomoduladora
-- La expresión génica puede ser un mejor indicador de senescencia funcional que la edad cronológica
-- Algunos donantes ancianos mantienen perfiles transcriptómicos juveniles, sugiriendo heterogeneidad en el envejecimiento
-
-## 📚 Referencias
-
-- Dataset de Validación: GSE35958 (Osteoporosis vs Control, donantes ancianos 79-94 años)
-- Metodología: Random Forest con Stratified 5-Fold Cross-Validation
-
 ## 👤 Autor
-
 **Eduardo**
 - Proyecto: Bioinformática Avanzada
-- Institución: [Tu Institución]
 - Año: 2025
 
 ## 📄 Licencia
-
-Este proyecto está bajo la Licencia MIT - ver el archivo LICENSE para más detalles.
-
-## 🙏 Agradecimientos
-
-- GEO (Gene Expression Omnibus) por los datos públicos de validación
-- Comunidad de scikit-learn por las herramientas de ML
-
----
-
-**Nota**: Este proyecto es parte de un estudio de investigación en bioinformática aplicada a células madre mesenquimales y senescencia celular.
+Este proyecto está bajo la Licencia MIT.
