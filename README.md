@@ -90,20 +90,24 @@ Actual Funcional (1)          1                   13
 ## 📁 Estructura del Proyecto
 
 ```
-ML_data/
-├── train_model.py              # Script principal de entrenamiento
-├── validate_model.py           # Script de validación
-├── X_features_matrix.csv       # Matriz de características (genes)
-├── y_labels.csv                # Etiquetas de clase
-├── metadata_samples.csv        # Metadata de las muestras
-├── best_model_msc_senescence.pkl    # Modelo entrenado
-├── scaler_msc_senescence.pkl        # Escalador StandardScaler
-├── feature_importance.png      # Gráfico de importancia de features
-├── validation/
-│   ├── X_test_GSE35958 (1).csv
-│   ├── y_test_GSE35958 (1) copy.csv
-│   └── metadata_GSE35958 (1).csv
-└── README.md
+bioinformatica-avanzada-hmsc-prediccion/
+├── README.md                          # Documentación principal
+└── Modelo Machine Learning/
+    ├── train_model.py                 # Script principal de entrenamiento
+    ├── validate_model.py              # Script de validación
+    ├── X_features_matrix.csv          # Matriz de características (genes)
+    ├── y_labels.csv                   # Etiquetas de clase
+    ├── metadata_samples.csv           # Metadata de las muestras
+    ├── best_model_msc_senescence.pkl  # Modelo entrenado
+    ├── scaler_msc_senescence.pkl      # Escalador StandardScaler
+    ├── feature_importance.png         # Gráfico de importancia de features
+    ├── .gitignore                     # Archivos ignorados por Git
+    ├── ControlNegativo/               # Datos de control negativo
+    ├── ControlPositivo/               # Datos de control positivo
+    └── validation/                    # Datos de validación GSE35958
+        ├── X_test_GSE35958 (1).csv
+        ├── y_test_GSE35958 (1) copy.csv
+        └── metadata_GSE35958 (1).csv
 ```
 
 ## 🚀 Uso
@@ -111,6 +115,7 @@ ML_data/
 ### 1. Entrenamiento del Modelo
 
 ```bash
+cd "Modelo Machine Learning"
 python train_model.py
 ```
 
@@ -124,6 +129,7 @@ Este script:
 ### 2. Validación con Datos Externos
 
 ```bash
+cd "Modelo Machine Learning"
 python validate_model.py
 ```
 
@@ -138,6 +144,10 @@ Este script:
 ```python
 import joblib
 import pandas as pd
+import os
+
+# Cambiar al directorio del modelo
+os.chdir("Modelo Machine Learning")
 
 # Cargar modelo y scaler
 model = joblib.load('best_model_msc_senescence.pkl')
