@@ -26,9 +26,6 @@ Este repositorio contiene el pipeline completo para:
 * Priorizar genes reguladores
 * Construir un modelo predictivo basado en Machine Learning
 * Validarlo en datos externos
-
-El proyecto está organizado en **tres fases independientes pero conectadas**.
-
 ---
 
 # 🎯 2. Objetivos del Proyecto
@@ -235,9 +232,6 @@ python validate_model.py
 ---
 
 # 🖼️ 8. Figuras Principales (Thumbnails)
-
-*(Las imágenes se mostrarán automáticamente cuando estén en GitHub)*
-
 ```
 Fase1-Discovery/figures/PCA_GSE39035_GSE7888.png
 Fase1-Discovery/figures/Volcano_Edad.png
