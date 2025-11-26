@@ -1,0 +1,6 @@
+"Contraste","Total_DEGs","Upregulated","Downregulated","Porc_Up","Porc_Down"
+"1. Edad (Old vs Young)",69,19,50,27.5,72.5
+"2. Pasaje (High vs Low)",203,55,148,27.1,72.9
+"3. Aditivo (Edad + Pasaje)",83,39,44,47,53
+"4. Interacción Edad×Pasaje",0,0,0,0,0
+"5. Late vs Early",188,120,68,63.8,36.2

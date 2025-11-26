@@ -86,46 +86,42 @@ Identificar genes y vías inmunomoduladoras alteradas durante la senescencia de 
 
 ## 6. Fase 3 – Modelo de Clasificación Machine Learning
 
-Esta fase utiliza el panel de genes identificado para entrenar un modelo predictivo capaz de clasificar nuevas muestras.
+Esta fase utiliza el panel de genes identificado para entrenar un modelo predictivo capaz de clasificar células mesenquimales (MSC) como Normales (Clase 0) u Osteoporosis Primaria (Clase 1).
 
 ### 📊 Datasets
 
-#### Datos de Entrenamiento
-- **Samples**: 28 muestras de hMSC (13 funcionales, 15 senescentes).
-- **Features**: 33 genes seleccionados del panel MSC-ImmunoScore.
-- **Source**: Datos de expresión génica normalizados (log2).
-
-#### Datos de Validación Externa
-- **Dataset**: GSE35958
-- **Samples**: 9 muestras de donantes ancianos (79-94 años).
-- **Grupos**: Controles ancianos y pacientes con osteoporosis.
+#### Datos Combinados
+- **Total de muestras**: 37
+  - Original: 28 muestras
+  - Validación externa (GSE35958): 9 muestras
+- **Features**: 33 genes seleccionados de las Fases I y II.
+- **Distribución de clases**:
+  - Clase 0 (Control): 23 muestras (62%)
+  - Clase 1 (OP): 14 muestras (38%)
 
 ### 🧬 Genes Biomarcadores Identificados (Top Features)
 
-| Rank | Gene | Importancia | Función Biológica |
-|------|------|-------------|-------------------|
-| 1 | **SCN9A** | 0.1853 | Canal de sodio, asociado con senescencia |
-| 2 | **HDAC9** | 0.0979 | Histona deacetilasa, regulación epigenética |
-| 3 | **KCTD16** | 0.0897 | Regulación de la degradación proteica |
-| 4 | **CD55** | 0.0627 | Proteína reguladora del complemento |
-| 5 | **EPHA5** | 0.0545 | Receptor tirosina quinasa |
+| Rank | Gene | Coeficiente (Abs) | Función Biológica |
+|------|------|-------------------|-------------------|
+| 1 | **SOX11** | 1.3473 | Factor de transcripción, altamente discriminativo |
+| 2 | **DDIT4L** | 0.2251 | Relacionado con estrés celular |
 
-### 🤖 Resultados del Modelo (Random Forest)
+**Nota**: SOX11 y DDIT4L emergen como los marcadores clave en el modelo más explicable.
 
-#### Entrenamiento (5-Fold Cross-Validation)
+### 🤖 Resultados del Modelo (Logistic Regression)
+
+Se seleccionó **Logistic Regression** por su máxima explicabilidad y rendimiento perfecto en validación cruzada.
+
+#### Cross-Validation (5-Fold)
 | Métrica | Valor |
 |---------|-------|
-| **Accuracy** | 92.7% |
-| **ROC-AUC** | **0.978** |
-
-#### Validación Externa (GSE35958)
-| Métrica | Valor |
-|---------|-------|
-| **Accuracy** | 78% |
-| **Recall** | 78% |
+| **Accuracy** | **100%** |
+| **ROC-AUC** | **1.000** |
 | **Precision** | 100% |
+| **Recall** | 100% |
 
-**Interpretación**: El modelo identifica correctamente el 78% de las muestras senescentes en un dataset independiente de donantes ancianos.
+#### Comparación con Decision Tree
+El Decision Tree (depth=6) también mostró un excelente rendimiento (**92.1% Accuracy**), proporcionando reglas interpretables, aunque ligeramente inferiores a los modelos lineales.
 
 ---
 
@@ -134,37 +130,31 @@ Esta fase utiliza el panel de genes identificado para entrenar un modelo predict
 ```
 bioinformatica-avanzada-hmsc-prediccion/
 ├── README.md                          # Documentación principal
+├── Fase1-Discovery/                   # Scripts y resultados de la Fase 1
+├── Fase2-Enrichment/                  # Análisis de enriquecimiento funcional
+├── ML_Validation/                     # Código para obtención de data de validación
 └── Fase 3 - Modelo de clasificación Machine Learning/
-    ├── train_model.py                 # Script principal de entrenamiento
-    ├── validate_model.py              # Script de validación
-    ├── X_features_matrix.csv          # Matriz de características (genes)
-    ├── y_labels.csv                   # Etiquetas de clase
-    ├── metadata_samples.csv           # Metadata de las muestras
-    ├── best_model_msc_senescence.pkl  # Modelo entrenado
-    ├── scaler_msc_senescence.pkl      # Escalador StandardScaler
-    ├── feature_importance.png         # Gráfico de importancia de features
-    ├── .gitignore                     # Archivos ignorados por Git
-    ├── ControlNegativo/               # Datos de control negativo
-    ├── ControlPositivo/               # Datos de control positivo
-    └── validation/                    # Datos de validación GSE35958
-        ├── X_test_GSE35958 (1).csv
-        ├── y_test_GSE35958 (1) copy.csv
-        └── metadata_GSE35958 (1).csv
+    ├── src/                           # Código fuente organizado
+    │   ├── models/                    # Scripts de entrenamiento (train_model_combined.py)
+    │   ├── visualizations/            # Scripts de visualización
+    │   └── data/                      # Datos procesados
+    ├── docs/                          # Documentación detallada (WALKTHROUGH.md)
+    ├── legacy_scripts/                # Scripts antiguos
+    ├── legacy_models/                 # Modelos antiguos
+    ├── validation/                    # Datos de validación externa
+    ├── final_explainable_model.pkl    # Modelo final (Logistic Regression)
+    ├── decision_boundaries_pca.png    # Visualización de límites de decisión
+    └── ...
 ```
 
 ## 🚀 Uso (Fase 3)
 
-### 1. Entrenamiento del Modelo
+### 1. Entrenamiento y Análisis
 ```bash
 cd "Fase 3 - Modelo de clasificación Machine Learning"
-python train_model.py
+python model_analysis_visualization.py
 ```
-
-### 2. Validación con Datos Externos
-```bash
-cd "Fase 3 - Modelo de clasificación Machine Learning"
-python validate_model.py
-```
+Este script entrena los modelos, realiza validación cruzada y genera todas las visualizaciones y reportes.
 
 ## 👤 Autor
 **Eduardo Tello y Anjali Castro**
