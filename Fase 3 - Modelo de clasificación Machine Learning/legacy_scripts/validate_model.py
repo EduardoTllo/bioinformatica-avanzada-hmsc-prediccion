@@ -5,7 +5,7 @@ import numpy as np
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report, roc_auc_score
 
 # Paths
-DATA_DIR = "c:/Users/eduar/OneDrive/Escritorio/bioinformatica_ML/ML_data"
+DATA_DIR = "c:/Users/eduar/OneDrive/Escritorio/bioinformatica_ML/ML_data/Fase 3 - Modelo de clasificación Machine Learning"
 VALIDATION_DIR = os.path.join(DATA_DIR, "validation")
 MODEL_PATH = os.path.join(DATA_DIR, "best_model_msc_senescence.pkl")
 SCALER_PATH = os.path.join(DATA_DIR, "scaler_msc_senescence.pkl")
@@ -103,15 +103,48 @@ def validate_new_data(model, scaler, training_features):
         y_pred = model.predict(X_scaled)
         y_prob = model.predict_proba(X_scaled)[:, 1]
         
+        # Create detailed results DataFrame
+        results_df = pd.DataFrame({
+            'Sample': y['Sample'].values,
+            'True_Label': y_true.values,
+            'Predicted_Label': y_pred,
+            'Prob_Class_0': 1 - y_prob,
+            'Prob_Class_1': y_prob,
+            'Correct': y_true.values == y_pred
+        })
+        
         # Evaluate
-        print("Accuracy:", accuracy_score(y_true, y_pred))
-        print("Confusion Matrix:\n", confusion_matrix(y_true, y_pred))
-        print("Classification Report:\n", classification_report(y_true, y_pred))
+        print("\n" + "="*80)
+        print("VALIDATION RESULTS")
+        print("="*80)
+        print(f"Accuracy: {accuracy_score(y_true, y_pred):.4f}")
+        print(f"\nConfusion Matrix:")
+        print(confusion_matrix(y_true, y_pred))
+        print(f"\nClassification Report:")
+        print(classification_report(y_true, y_pred))
         
         if len(y_true.unique()) > 1:
-             print("ROC AUC:", roc_auc_score(y_true, y_prob))
+             print(f"ROC AUC: {roc_auc_score(y_true, y_prob):.4f}")
         else:
             print("ROC AUC: Not defined (only one class in y_true)")
+        
+        # Show all predictions
+        print("\n" + "="*80)
+        print("DETAILED PREDICTIONS FOR ALL SAMPLES")
+        print("="*80)
+        print(results_df.to_string(index=False))
+        
+        # Show misclassified samples
+        misclassified = results_df[~results_df['Correct']]
+        if len(misclassified) > 0:
+            print("\n" + "="*80)
+            print(f"[X] MISCLASSIFIED SAMPLES ({len(misclassified)}/{len(results_df)})")
+            print("="*80)
+            print(misclassified.to_string(index=False))
+        else:
+            print("\n" + "="*80)
+            print("[OK] ALL SAMPLES CORRECTLY CLASSIFIED!")
+            print("="*80)
 
     except Exception as e:
         print(f"Error validating new data: {e}")
