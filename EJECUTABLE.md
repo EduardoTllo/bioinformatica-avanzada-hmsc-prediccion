@@ -228,15 +228,3 @@ python validate_model.py
 * **Accuracy CV:** 92.7 %
 * **AUC:** 0.978
 * **Validación externa (GSE35958):** 78 % accuracy
-
----
-
-# 🖼️ 8. Figuras Principales (Thumbnails)
-```
-Fase1-Discovery/figures/PCA_GSE39035_GSE7888.png
-Fase1-Discovery/figures/Volcano_Edad.png
-Fase2-Enrichment/figures/GO_Edad.png
-Fase2-Enrichment/figures/Red_Regulatoria.png
-Fase3 - Modelo de clasificación Machine Learning/feature_importance.png
-```
-
